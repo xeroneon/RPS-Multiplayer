@@ -20,6 +20,8 @@ var player1Choice = "";
 
 var player2Choice = "";
 
+var playersCon = 0;
+
 
 // connectionsRef references a specific location in our database.
 // All of our connections will be stored in this directory.
@@ -30,8 +32,6 @@ var connectionsRef = database.ref("/connections");
 // '.info/connected' is a boolean value, true if the client is connected and false if they are not.
 var connectedRef = database.ref(".info/connected");
 
-
-
 connectedRef.on("value", function (snap) {
 
     // If they are connected..
@@ -41,15 +41,42 @@ connectedRef.on("value", function (snap) {
         var con = connectionsRef.push(true);
         // Remove user from the connection list when they disconnect.
         con.onDisconnect().remove();
+
+        // if (snap.numChildren() === 0) {
+        //     player1Name = prompt("What is your name?");
+        // }
     }
+
 
 
 });
 
+connectionsRef.on("value", function(snap) {
+    console.log("connected", snap.numChildren())
+
+    
+        // if (snap.numChildren() === 1) {
+        //     player1Name = prompt("What is your name?");
+            
+        //     database.ref("/players").set({
+        //         player1Name: player1Name
+        //     });
+        // }
+        // else if (snap.numChildren() === 2) {
+        //     player2Name = prompt("What is your name?");
+            
+        //     database.ref("/players").set({
+        //         player2Name: player2Name
+        //     });
+        // }
+
+
+})
+
 $("#player1-submit").on("click", function() {
     player1Name = $("#player1-input").val();
 
-    database.ref().set({
+    database.ref("/players").set({
         player1Name: player1Name
     });
 
@@ -58,17 +85,17 @@ $("#player1-submit").on("click", function() {
 $("#player2-submit").on("click", function() {
     player2Name = $("#player2-input").val();
 
-    database.ref().set({
+    database.ref("/players").set({
         player2Name: player2Name
     });
 
 })
 
-database.ref().on("value", function(snap) {
+database.ref("/players").on("value", function(snap) {
     
     // if (snapshot.child("player1Name").exists || snapshot.child("player2Name").exists ) {
-        player1Name = snap.val().player1Name
-        player2Name = snap.val().player2Name
+        player1Name = snap.val().player1Name;
+        player2Name = snap.val().player2Name;
         $("#player1-name").text(player1Name);
         $("#player2-name").text(player2Name);
 
@@ -76,5 +103,7 @@ database.ref().on("value", function(snap) {
     //     $("#player1-name").text("Player 1");
     //     $("#player2-name").text("Player 2");
     // }
+
+    playersCon = snap.val().playersCon;
 
 })
