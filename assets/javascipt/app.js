@@ -23,6 +23,7 @@ var player2Choice = "";
 var playersCon = 0;
 
 
+
 // connectionsRef references a specific location in our database.
 // All of our connections will be stored in this directory.
 var connectionsRef = database.ref("/connections");
@@ -51,53 +52,62 @@ connectedRef.on("value", function (snap) {
 
 });
 
-connectionsRef.on("value", function(snap) {
+connectionsRef.on("value", function (snap) {
     console.log("connected", snap.numChildren())
 
-    
-        // if (snap.numChildren() === 1) {
-        //     player1Name = prompt("What is your name?");
-            
-        //     database.ref("/players").set({
-        //         player1Name: player1Name
-        //     });
-        // }
-        // else if (snap.numChildren() === 2) {
-        //     player2Name = prompt("What is your name?");
-            
-        //     database.ref("/players").set({
-        //         player2Name: player2Name
-        //     });
-        // }
 
+    if (snap.numChildren() === 1) {
+        // player1Name = prompt("What is your name?");
 
+        // database.ref("/players").set({
+        //     player1Name: player1Name
+        // });
+    }
+    if (snap.numChildren() === 2) {
+        // player2Name = prompt("What is your name?");
+
+        // database.ref("/players").set({
+        //     player2Name: player2Name
+        // });
+        if (sessionStorage.getItem("isPlayer") === player1Name) {
+            $("#player1-choice").text("Rock");
+        }
+    }
+
+    player1Name = snap.parent().val().player1Name;
+    player2Name = snap.parent().val().player2Name;
 })
 
-$("#player1-submit").on("click", function() {
+$("#player1-submit").on("click", function () {
     player1Name = $("#player1-input").val();
+    player2Name = $("#player2-input").val();
 
-    database.ref("/players").set({
+    database.ref("/players").update({
         player1Name: player1Name
     });
 
+    sessionStorage.setItem("isPlayer", player1Name);
 })
 
-$("#player2-submit").on("click", function() {
+$("#player2-submit").on("click", function () {
+    player1Name = $("#player1-input").val();
     player2Name = $("#player2-input").val();
 
-    database.ref("/players").set({
+    database.ref("/players").update({
         player2Name: player2Name
     });
 
+    sessionStorage.setItem("isPlayer", "2");
+
 })
 
-database.ref("/players").on("value", function(snap) {
-    
+database.ref("/players").on("value", function (snap) {
+
     // if (snapshot.child("player1Name").exists || snapshot.child("player2Name").exists ) {
-        player1Name = snap.val().player1Name;
-        player2Name = snap.val().player2Name;
-        $("#player1-name").text(player1Name);
-        $("#player2-name").text(player2Name);
+    player1Name = snap.val().player1Name;
+    player2Name = snap.val().player2Name;
+    $("#player1-name").text(player1Name);
+    $("#player2-name").text(player2Name);
 
     // } else {
     //     $("#player1-name").text("Player 1");
