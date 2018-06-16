@@ -20,29 +20,42 @@
 </head>
 
 <body>
-    <div class="row white-text">
+    <div class="row white-text center">
         <div class="col s4 offset-s1">
             <input type="text" placeholder="What is player 1's name?" id="player1-input">
         </div>
         <div class="col s1">
-            <a class="submit" id="player1-submit">Submit</a>
+            <button class="btn waves-effect waves-light" type="submit" name="action" id="player1-submit">Ready
+            </button>
+            <!-- <a class="submit" id="player1-submit">Ready</a> -->
         </div>
         <div class="col s4 offset-s1">
             <input type="text" placeholder="What is player 2's name?" id="player2-input">
         </div>
         <div class="col s1">
-            <a class="submit" id="player2-submit">Submit</a>
+            <button class="btn waves-effect waves-light" type="submit" name="action" id="player2-submit">Ready
+            </button>
+            <!-- <a class="submit" id="player2-submit">Ready</a> -->
         </div>
         <div id="player1" class="col s4 red offset-s1">
             <h1>
                 <span id="player1-name">Player 1</span>
             </h1>
-            <p id="player1-choice"></p>
+            <p id="player1-choice">
+                <span id="rock1">&nbsp;</span>
+                <span id="paper1">&nbsp;</span>
+                <span id="scissors1">&nbsp;</span>
+            </p>
         </div>
         <div id="player2" class="col blue s4 offset-s2">
             <h1>
                 <span id="player2-name">Player 2</span>
             </h1>
+            <p id="player2-choice">
+                <span id="rock2">&nbsp;</span>
+                <span id="paper2">&nbsp;</span>
+                <span id="scissors2">&nbsp;</span>
+            </p>
         </div>
     </div>
 
