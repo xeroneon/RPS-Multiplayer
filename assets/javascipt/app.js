@@ -52,40 +52,15 @@ connectedRef.on("value", function (snap) {
 
     // If they are connected..
     if (snap.val()) {
-        // console.log(snap.name());
         // Add user to the connections list.
         var con = connectionsRef.push(true)
-        
-        // con.onDisconnect().then((snap) => {
-        //     key = snap.key;
-        //     console.log(key);
-
-        //     database.ref().update({
-        //         player1Connected: true
-        //     })
-        //  });
-        // Remove user from the connection list when they disconnect.
-
-        // con.update({
-        //     player1Connected: true
-        // })
 
         con.onDisconnect().remove();
-
-        // if (snap.numChildren() === 0) {
-        //     player1Name = prompt("What is your name?");
-        // }
-
     }
 
 
 
 });
-// database.ref("/connections/" + key).on("value", function(snap) {
-//     database.ref().update({
-//         player1Connected: true
-//     })
-// })
 connectionsRef.on("value", function (snap) {
     console.log("connected", snap.numChildren())
 
@@ -94,24 +69,22 @@ connectionsRef.on("value", function (snap) {
             player1Connected: false,
             player2Connected: false
         })
+
+        if (player2Connected === false) {
+            database.ref("/players").update({
+                player2Ready: false
+            })
+            database.ref("/players").update({
+                player1Name: "Player 1",
+                player2Name: "Player 2"
+            })
+        }
     }
     if (snap.numChildren() === 1) {
         playersCon = 1;
-
-        // if (sessionStorage.getItem("isPlayer") === false) {
-        //     database.ref("/players").update({
-        //         player1Name: "Player 1",
-        //         player2Name: "Player 2"
-        //     })
-        // }
-
         database.ref().update({
             playersCon: playersCon,
         })
-        // database.ref("/players").update({
-        //     player1Ready: false,
-        //     player2Ready: false
-        // })
         if (player1Connected === false) {
             database.ref().update({
                 player1Connected: true,
@@ -130,7 +103,7 @@ connectionsRef.on("value", function (snap) {
             })
         }
 
-        if(sessionStorage.getItem("isPlayer") === "1") {
+        if (sessionStorage.getItem("isPlayer") === "1") {
             database.ref().update({
                 player2Connected: false
             })
@@ -138,7 +111,7 @@ connectionsRef.on("value", function (snap) {
                 player2Ready: false
             })
         }
-        if(sessionStorage.getItem("isPlayer") === "2") {
+        if (sessionStorage.getItem("isPlayer") === "2") {
             database.ref().update({
                 player1Connected: false
             })
@@ -158,39 +131,14 @@ connectionsRef.on("value", function (snap) {
                 player1Connected: true
             })
         }
-        if(player2Connected === false) {
+        if (player2Connected === false) {
             database.ref().update({
                 player2Connected: true
             })
         }
     }
-    // connectionsRef.update({
-    //     player1Connected: false
-    // })
-    // if (con.val().player1Connected === false) {
-    //     con.update({
-    //         player1Connected: true
-    //     })
-    // }
 
 });
-
-// database.ref().once("value").then(function(snap) {
-//     if (snap.val().playersCon === 0) {
-//         database.ref("/players").update({
-//             player1Name: "Player 1",
-//             player2Name: "Player 2"
-//         })
-//     }
-
-//     player1Name = snap.val().player1Name;
-
-//     player2Name = snap.val().player2Name;
-    
-//     // if (snap.val().playersCon === 1) {
-//     //     console.log("something")
-//     // }
-// })
 
 $("#player1-submit").on("click", function () {
     player1Name = $("#player1-input").val();
@@ -240,21 +188,21 @@ database.ref("/players").on("value", function (snap) {
     player2Ready = snap.val().player2Ready;
 });
 
-database.ref("/players/player1Name").on("value", function(snap) {
+database.ref("/players/player1Name").on("value", function (snap) {
     if (snap.val() !== "Player 1") {
         $("#player1-input").addClass("hide");
         $("#player1-submit").addClass("hide");
     }
 })
 
-database.ref("/players/player2Name").on("value", function(snap) {
+database.ref("/players/player2Name").on("value", function (snap) {
     if (snap.val() !== "Player 2") {
         $("#player2-input").addClass("hide");
         $("#player2-submit").addClass("hide");
     }
 })
 
-database.ref().on("value", function(snap) {
+database.ref().on("value", function (snap) {
     player2Connected = snap.val().player2Connected;
 
     player1Connected = snap.val().player1Connected;
@@ -264,7 +212,7 @@ database.ref().on("value", function(snap) {
     // console.log(player1Connected);
     if (player1Connected === true && player2Connected === true) {
         // sessionStorage.setItem("chose", false);
-        
+
         if (sessionStorage.getItem("isPlayer") === "1" && snap.val().player1chose === false) {
             console.log("ran");
 
@@ -275,6 +223,10 @@ database.ref().on("value", function(snap) {
     }
 
     if (snap.val().player1chose === true && snap.val().player2chose === true) {
+        $("#rock2").addClass("hide");
+        $("#paper2").addClass("hide");
+        $("#scissors2").addClass("hide");
+
         if (snap.val().player1Choice === "rock" && snap.val().player2Choice === "rock") {
             // console.log("result");
             $("#result").text("Tie");
@@ -295,12 +247,30 @@ database.ref().on("value", function(snap) {
         else if (snap.val().player1Choice === "scissors" && snap.val().player2Choice === "rock") {
             // console.log("result");
             $("#result").text(player2Name + " Wins");
-        }
+        };
+
+        
+        setTimeout(function () {
+            database.ref().update({
+                player1Choice: "",
+                player2Choice: "",
+                player1chose: false,
+                player2chose: false
+            });
+            if(sessionStorage.getItem("isPlayer") === "1") {
+                $("#rock1").removeClass("hide");
+                $("#paper1").removeClass("hide");
+                $("#scissors1").removeClass("hide");
+            }
+
+            $("#result").text("");
+
+        }, 1000 * 3)
     }
 });
 
-database.ref("player1Choice").on("value", function(snap) {
-    if (sessionStorage.getItem("isPlayer") === "2") {
+database.ref("player1Choice").on("value", function (snap) {
+    if (sessionStorage.getItem("isPlayer") === "2" && snap.val() !== "") {
         $("#rock2").removeClass("hide");
         $("#paper2").removeClass("hide");
         $("#scissors2").removeClass("hide");
@@ -312,7 +282,7 @@ database.ref().update({
     player1Choice: "",
     player1chose: false
 })
-$("#rock1").on("click", function() {
+$("#rock1").on("click", function () {
     player1Choice = "rock";
     database.ref().update({
         player1Choice: "",
@@ -327,8 +297,8 @@ $("#rock1").on("click", function() {
         $("#scissors1").addClass("hide");
     }
     console.log("click");
-} )
-$("#paper1").on("click", function() {
+})
+$("#paper1").on("click", function () {
     player1Choice = "paper";
     database.ref().update({
         player1Choice: "",
@@ -337,9 +307,15 @@ $("#paper1").on("click", function() {
     database.ref().update({
         player1Choice: player1Choice
     });
+
+    if (sessionStorage.getItem("isPlayer") === "1") {
+        $("#rock1").addClass("hide");
+        $("#paper1").addClass("hide");
+        $("#scissors1").addClass("hide");
+    }
     console.log("click");
-} )
-$("#scissors1").on("click", function() {
+})
+$("#scissors1").on("click", function () {
     player1Choice = "scissors";
     database.ref().update({
         player1Choice: "",
@@ -348,8 +324,14 @@ $("#scissors1").on("click", function() {
     database.ref().update({
         player1Choice: player1Choice
     });
+
+    if (sessionStorage.getItem("isPlayer") === "1") {
+        $("#rock1").addClass("hide");
+        $("#paper1").addClass("hide");
+        $("#scissors1").addClass("hide");
+    }
     console.log("click");
-} )
+})
 
 
 //player 2 choices
@@ -357,7 +339,7 @@ database.ref().update({
     player2Choice: "",
     player2chose: false
 })
-$("#rock2").on("click", function() {
+$("#rock2").on("click", function () {
     player2Choice = "rock";
     database.ref().update({
         player2Choice: "",
@@ -372,8 +354,8 @@ $("#rock2").on("click", function() {
         $("#scissors2").addClass("hide");
     }
     console.log("click");
-} )
-$("#paper2").on("click", function() {
+})
+$("#paper2").on("click", function () {
     player2Choice = "paper";
     database.ref().update({
         player2Choice: "",
@@ -388,8 +370,8 @@ $("#paper2").on("click", function() {
         $("#scissors2").addClass("hide");
     }
     console.log("click");
-} )
-$("#scissors2").on("click", function() {
+})
+$("#scissors2").on("click", function () {
     player2Choice = "scissors";
     database.ref().update({
         player2Choice: "",
@@ -404,13 +386,13 @@ $("#scissors2").on("click", function() {
         $("#scissors2").addClass("hide");
     }
     console.log("click");
-} )
+})
 
 //send messages
 
 // database.
 
-$("#chat-send").on("click", function() {
+$("#chat-send").on("click", function () {
     if (sessionStorage.getItem("isPlayer") === "1") {
         database.ref("/messages").update({
             player1Message: $("#chat-input").val()
@@ -422,13 +404,13 @@ $("#chat-send").on("click", function() {
     }
 })
 
-database.ref("/messages/player1Message").on("value", function(snap) {
+database.ref("/messages/player1Message").on("value", function (snap) {
     if (player1Ready === true && player2Ready === true) {
         $("#chat-window").append('<p class="player1-message">' + player1Name + ': ' + snap.val() + '</p>');
     }
 })
 
-database.ref("/messages/player2Message").on("value", function(snap) {
+database.ref("/messages/player2Message").on("value", function (snap) {
     if (player1Ready === true && player2Ready === true) {
         $("#chat-window").append('<p class="player2-message">' + player2Name + ': ' + snap.val() + '</p>');
     }
