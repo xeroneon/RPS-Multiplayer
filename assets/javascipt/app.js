@@ -203,8 +203,6 @@ $("#player2-submit").on("click", function () {
 });
 
 database.ref("/players").on("value", function (snap) {
-
-    // if (snapshot.child("player1Name").exists || snapshot.child("player2Name").exists ) {
     player1Name = snap.val().player1Name;
     player2Name = snap.val().player2Name;
     $("#player1-name").text(player1Name);
@@ -212,16 +210,6 @@ database.ref("/players").on("value", function (snap) {
 
     player1Ready = snap.val().player1Ready;
     player2Ready = snap.val().player2Ready;
-
-    // } else {
-    //     $("#player1-name").text("Player 1");
-    //     $("#player2-name").text("Player 2");
-    // }
-
-    // playersCon = snap.val().playersCon;
-
-
-
 });
 
 database.ref().on("value", function(snap) {
@@ -376,7 +364,30 @@ $("#scissors2").on("click", function() {
     console.log("click");
 } )
 
-//calculate who wins
-database.ref("player2Choice").on("value", function(snap) {
+//send messages
 
+// database.
+
+$("#chat-send").on("click", function() {
+    if (sessionStorage.getItem("isPlayer") === "1") {
+        database.ref("/messages").update({
+            player1Message: $("#chat-input").val()
+        })
+    } else if (sessionStorage.getItem("isPlayer") === "2") {
+        database.ref("/messages").update({
+            player2Message: $("#chat-input").val()
+        })
+    }
+})
+
+database.ref("/messages/player1Message").on("value", function(snap) {
+    if (player1Ready === true && player2Ready === true) {
+        $("#chat-window").append('<p class="player1-message">' + player1Name + ': ' + snap.val() + '</p>');
+    }
+})
+
+database.ref("/messages/player2Message").on("value", function(snap) {
+    if (player1Ready === true && player2Ready === true) {
+        $("#chat-window").append('<p class="player2-message">' + player2Name + ': ' + snap.val() + '</p>');
+    }
 })

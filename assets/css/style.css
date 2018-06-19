@@ -1,0 +1,12 @@
+#chat-window {
+    height: 200px;
+    margin-bottom: 20px;
+}
+
+.player1-message {
+    color: purple;
+}
+
+.player2-message {
+    color: aqua;
+}
