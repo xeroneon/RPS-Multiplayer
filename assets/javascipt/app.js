@@ -34,7 +34,8 @@ var key;
 
 
 database.ref().update({
-    player2Connected: false
+    player2Connected: false,
+    playersCon: 0
 })
 // connectionsRef references a specific location in our database.
 // All of our connections will be stored in this directory.
@@ -80,7 +81,6 @@ connectedRef.on("value", function (snap) {
 
 
 });
-
 // database.ref("/connections/" + key).on("value", function(snap) {
 //     database.ref().update({
 //         player1Connected: true
@@ -97,6 +97,13 @@ connectionsRef.on("value", function (snap) {
     }
     if (snap.numChildren() === 1) {
         playersCon = 1;
+
+        // if (sessionStorage.getItem("isPlayer") === false) {
+        //     database.ref("/players").update({
+        //         player1Name: "Player 1",
+        //         player2Name: "Player 2"
+        //     })
+        // }
 
         database.ref().update({
             playersCon: playersCon,
@@ -116,6 +123,10 @@ connectionsRef.on("value", function (snap) {
         if (player2Connected === false) {
             database.ref("/players").update({
                 player2Ready: false
+            })
+            database.ref("/players").update({
+                player1Name: "Player 1",
+                player2Name: "Player 2"
             })
         }
 
@@ -164,6 +175,23 @@ connectionsRef.on("value", function (snap) {
 
 });
 
+// database.ref().once("value").then(function(snap) {
+//     if (snap.val().playersCon === 0) {
+//         database.ref("/players").update({
+//             player1Name: "Player 1",
+//             player2Name: "Player 2"
+//         })
+//     }
+
+//     player1Name = snap.val().player1Name;
+
+//     player2Name = snap.val().player2Name;
+    
+//     // if (snap.val().playersCon === 1) {
+//     //     console.log("something")
+//     // }
+// })
+
 $("#player1-submit").on("click", function () {
     player1Name = $("#player1-input").val();
     player2Name = $("#player2-input").val();
@@ -211,6 +239,20 @@ database.ref("/players").on("value", function (snap) {
     player1Ready = snap.val().player1Ready;
     player2Ready = snap.val().player2Ready;
 });
+
+database.ref("/players/player1Name").on("value", function(snap) {
+    if (snap.val() !== "Player 1") {
+        $("#player1-input").addClass("hide");
+        $("#player1-submit").addClass("hide");
+    }
+})
+
+database.ref("/players/player2Name").on("value", function(snap) {
+    if (snap.val() !== "Player 2") {
+        $("#player2-input").addClass("hide");
+        $("#player2-submit").addClass("hide");
+    }
+})
 
 database.ref().on("value", function(snap) {
     player2Connected = snap.val().player2Connected;
