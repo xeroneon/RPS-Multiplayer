@@ -244,9 +244,25 @@ database.ref().on("value", function (snap) {
             // console.log("result");
             $("#result").text(player1Name + " Wins");
         }
+        else if (snap.val().player1Choice === "paper" && snap.val().player2Choice === "paper") {
+            // console.log("result");
+            $("#result").text("Tie");
+        }
+        else if (snap.val().player1Choice === "paper" && snap.val().player2Choice === "scissors") {
+            // console.log("result");
+            $("#result").text(player2Name + " Wins");
+        }
         else if (snap.val().player1Choice === "scissors" && snap.val().player2Choice === "rock") {
             // console.log("result");
             $("#result").text(player2Name + " Wins");
+        }
+        else if (snap.val().player1Choice === "scissors" && snap.val().player2Choice === "scissors") {
+            // console.log("result");
+            $("#result").text("Tie");
+        }
+        else if (snap.val().player1Choice === "scissors" && snap.val().player2Choice === "paper") {
+            // console.log("result");
+            $("#result").text(player1Name + " Wins");
         };
 
         
@@ -415,3 +431,23 @@ database.ref("/messages/player2Message").on("value", function (snap) {
         $("#chat-window").append('<p class="player2-message">' + player2Name + ': ' + snap.val() + '</p>');
     }
 })
+
+//if player presses enter instead of button
+
+document.getElementById('chat-input').onkeypress = function(e){
+    if (!e) e = window.event;
+    var keyCode = e.keyCode || e.which;
+    if (keyCode == '13'){
+      // Enter pressed
+      if (sessionStorage.getItem("isPlayer") === "1") {
+        database.ref("/messages").update({
+            player1Message: $("#chat-input").val()
+        })
+    } else if (sessionStorage.getItem("isPlayer") === "2") {
+        database.ref("/messages").update({
+            player2Message: $("#chat-input").val()
+        })
+    }
+      return false;
+    }
+  }
